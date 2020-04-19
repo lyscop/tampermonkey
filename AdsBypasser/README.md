@@ -1,3 +1,5 @@
+[AdsBypasser]（https://greasyfork.org/zh-CN/scripts/4881-adsbypasser "AdsBypasser"）
+
 Feature<br>
 This user script helps you to:<br>
 
