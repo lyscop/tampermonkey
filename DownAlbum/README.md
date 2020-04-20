@@ -1,4 +1,4 @@
-[link](https://greasyfork.org/zh-CN/scripts/2180-downalbum)
+[Link](https://greasyfork.org/zh-CN/scripts/2180-downalbum)
 
 DownAlbum<br>
 Facebook, Instagram, Pinterest, Twitter, Ask.fm, Weibo Album Downloader<br>
