@@ -1,4 +1,4 @@
-[anti-redirect](https://greasyfork.org/zh-CN/scripts/11915-anti-redirect)
+[Link](https://greasyfork.org/zh-CN/scripts/11915-anti-redirect)
 
 GM 脚本，反重定向<br>
 去除各搜索引擎/常用网站的重定向<br>
