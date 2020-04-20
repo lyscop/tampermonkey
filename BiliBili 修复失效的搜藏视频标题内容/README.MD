@@ -1,4 +1,4 @@
-[BiliBili 修复失效的搜藏视频标题内容](https://greasyfork.org/zh-CN/scripts/371687-bilibili-%E4%BF%AE%E5%A4%8D%E5%A4%B1%E6%95%88%E7%9A%84%E6%90%9C%E8%97%8F%E8%A7%86%E9%A2%91%E6%A0%87%E9%A2%98%E5%86%85%E5%AE%B9)
+[Link](https://greasyfork.org/zh-CN/scripts/371687-bilibili-%E4%BF%AE%E5%A4%8D%E5%A4%B1%E6%95%88%E7%9A%84%E6%90%9C%E8%97%8F%E8%A7%86%E9%A2%91%E6%A0%87%E9%A2%98%E5%86%85%E5%AE%B9)
 
 失效<br>
 ![img 图标](https://greasyfork.org/system/screenshots/screenshots/000/012/311/original/%E6%90%9C%E7%8B%97%E6%88%AA%E5%9B%BE20180829083502.png?1536661517)
