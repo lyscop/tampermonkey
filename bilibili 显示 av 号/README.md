@@ -1,4 +1,4 @@
-[LINK](https://greasyfork.org/zh-CN/scripts/398542-bilibili-%E6%98%BE%E7%A4%BA-av-%E5%8F%B7)失效<br>
+[LINK](https://greasyfork.org/zh-CN/scripts/398542-bilibili-%E6%98%BE%E7%A4%BA-av-%E5%8F%B7)<br>失效<br>
 
 在 bilibili 视频播放页显示视频 av 号<br>
 
