@@ -1,4 +1,4 @@
-[bilibili 同时显示 av 号和 bv 号](https://greasyfork.org/zh-CN/scripts/398533-bilibili-%E5%90%8C%E6%97%B6%E6%98%BE%E7%A4%BA-av-%E5%8F%B7%E5%92%8C-bv-%E5%8F%B7)
+[Link](https://greasyfork.org/zh-CN/scripts/398533-bilibili-%E5%90%8C%E6%97%B6%E6%98%BE%E7%A4%BA-av-%E5%8F%B7%E5%92%8C-bv-%E5%8F%B7)
 
 av 与 bv 的转化在本地进行. 没有使用当前常见的调用 bilibili api 的做法<br>
 
