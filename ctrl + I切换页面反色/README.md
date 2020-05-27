@@ -1,3 +1,5 @@
+https://greasyfork.org/zh-CN/scripts/30923-ctrl-i%E5%88%87%E6%8D%A2%E9%A1%B5%E9%9D%A2%E5%8F%8D%E8%89%B2
+
 喵喵喵
 <br>
 此脚本可以方便快捷地把您正在浏览的网页颜色反相
