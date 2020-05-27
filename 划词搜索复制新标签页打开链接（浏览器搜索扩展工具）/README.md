@@ -18,14 +18,19 @@ https://greasyfork.org/zh-CN/scripts/397040-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%90%9C
 进入任意页面，划词选择后自动弹出工具。
 
 **20200505更新**<br>
+图标大小16px 上方文字距离 背景透明<br>
+延时自动关闭<br>
 添加后台标签页打开<br>
 滚动关闭<br>
 添加fadein/out<br>
-复制关闭标签栏<br>
+点击复制关闭标签栏<br>
+添加QQ邮箱 油猴设置<br>
+gif icon<br>
 
 **20200527更新**<br>
 添加打开函数后台打开<br>
 关闭时间固定<br>
-添加粘贴 input、textarea、印象笔记en-note，光标在输入框弹框<br>
 鼠标移入不关闭 移出自动6s关闭<br>
+添加粘贴 input、textarea、印象笔记en-note，光标在输入框弹框<br>
+
 
