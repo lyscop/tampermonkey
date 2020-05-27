@@ -28,4 +28,4 @@ https://greasyfork.org/zh-CN/scripts/397040-%E6%B5%8F%E8%A7%88%E5%99%A8%E6%90%9C
 关闭时间固定<br>
 添加粘贴 input、textarea、印象笔记en-note，光标在输入框弹框<br>
 鼠标移入不关闭 移出自动6s关闭<br>
-复制关闭标签栏<br>
+
