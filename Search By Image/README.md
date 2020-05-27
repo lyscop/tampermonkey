@@ -72,3 +72,11 @@ IQDB<br>
 864907600cc (ccloli)
 文科 (wenketel)
 本脚本基于 GPLv3 协议开源 http://www.gnu.org/licenses/gpl.html‎
+
+追加说明：
+
+首先，这个脚本只能搜索 img 标签的图片，对 css background-image 什么的话，呵呵 = =
+
+其次，由于方便设计，估计有很多网站设计图片翻页或者图片动态效果时，会在图片上方加个透明的层，这样也是获取不到图片的 = =
+
+另外，搜索贴吧内图片时，如果出现搜索的 url 为 base64 的情况，请看此贴：http://tieba.baidu.com/p/3145502558
