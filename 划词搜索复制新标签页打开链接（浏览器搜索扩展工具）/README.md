@@ -33,4 +33,5 @@ gif icon<br>
 鼠标移入不关闭 移出自动6s关闭<br>
 添加粘贴 input、textarea、印象笔记en-note，光标在输入框弹框<br>
 
-
+**20200606更新**<br>
+去掉type中submit、button弹窗<br>
