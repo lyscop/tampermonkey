@@ -1191,9 +1191,10 @@
         img.setAttribute('src', obj.image);
         img.setAttribute('alt', obj.name);
         img.setAttribute('title', obj.name);
-        img.addEventListener('mouseup', function () {
+        img.addEventListener('mouseup', function () {//鼠标弹起响应open函数
                 keyword.beforePopup(obj.popup);
         });
+
         img.setAttribute('style', '' +
             'cursor:pointer!important;' +
             'display:inline-block!important;' +
@@ -1244,7 +1245,7 @@
             return;
         }
         var text = window.getSelection().toString().trim();
-        if ((text && icon.style.display == 'none') || (((e.target.localName.toLowerCase() === 'input' || e.target.localName.toLowerCase() === 'textarea') && e.target.type.toLowerCase() !== 'submit' && e.target.type.toLowerCase() !== 'button') && e.target.disabled === false) || (document.activeElement.tagName.toLowerCase() === 'en-note' && e.target.localName.toLowerCase() !== 'en-note')) {
+        if ((text && icon.style.display == 'none') || (((e.target.localName.toLowerCase() === 'input' || e.target.localName.toLowerCase() === 'textarea') && e.target.type.toLowerCase() !== 'submit' && e.target.type.toLowerCase() !== 'button' && e.target.type.toLowerCase() !== 'checkbox') && e.target.disabled === false) || (document.activeElement.tagName.toLowerCase() === 'en-note' && e.target.localName.toLowerCase() !== 'en-note')) {
             icon.style.top = e.pageY +15 + 'px';//设置文字下方距离
             if(e.pageX -70<10)
                 icon.style.left='10px';
@@ -1325,6 +1326,56 @@
         }
 */
     });
+
+    let mouseEvent = null;
+//Alt+o弹图标栏
+//    document.body.addEventListener('keydown',function(event){
+//document.addEventListener("mousemove",function(e){
+    document.addEventListener('mousemove', event => {
+        // console.log('mousemove', e)
+        mouseEvent = event;
+    });
+
+//    document.addEventListener('keydown',function(event){
+    document.addEventListener('keydown',event => {
+
+
+        var keynum;
+        if(window.event) // IE
+        {
+            keynum = event.keyCode;
+        }
+        else if(event.which) // Netscape/Firefox/Opera
+        {
+            keynum = event.which;
+        }
+console.log(event.keyCode)
+//console.log(e.pageX+","+e.pageY)
+        if(keynum==79&&event.altKey){
+
+            icon.style.top = mouseEvent.pageY +25 + 'px';//设置文字下方距离
+            if(mouseEvent.pageX -70<10)
+                icon.style.left='10px';
+            else
+                icon.style.left = mouseEvent.pageX -70 + 'px';
+
+            //            icon.style.top = e.pageY + 'px';
+//            icon.style.left = e.pageX + 'px';
+//            icon.style.top = 500 + 'px';
+//            icon.style.left = 500 + 'px';
+
+            console.log(mouseEvent.pageX+","+mouseEvent.pageY, mouseEvent)
+
+            fadeIn(icon);
+
+            clearTimeout(timer);
+
+            timer = window.setTimeout(TimeOutHide, 6000);
+
+        }
+    });
+//});
+
 
     var TimeOutHide;
     var ismouseenter = false;
