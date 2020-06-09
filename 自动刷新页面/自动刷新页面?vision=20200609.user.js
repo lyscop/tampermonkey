@@ -59,6 +59,7 @@
             if(keynum==85&&event.altKey){
 //                sessionStorage.clear();
                 sessionStorage.removeItem('oixmRefreshTime');
+                location.reload();
 //                console.log(time)
                 console.log(sessionStorage)
 //            } else if (keynum==76&&event.altKey) {
