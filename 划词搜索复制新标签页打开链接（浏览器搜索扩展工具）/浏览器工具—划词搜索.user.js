@@ -172,7 +172,7 @@
 //            image: 'https://i.ibb.co/hHk6Mtv/icons8-link-96-1.png',
             host: [''],
             popup: function (text) {
-                if(text.indexOf("http://")==0||text.indexOf("https://")==0)
+                if(text.indexOf("http://")==0||text.indexOf("https://")==0||text.indexOf("chrome://")==0)
 
                 {
                  try {
