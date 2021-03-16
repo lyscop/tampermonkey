@@ -1,4 +1,4 @@
-https://greasyfork.org/zh-CN/users/150560
+https://greasyfork.org/zh-CN/scripts/41076
 
 https://greasyfork.org/zh-CN/scripts/35251
 
