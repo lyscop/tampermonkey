@@ -1,0 +1,595 @@
+// ==UserScript==
+// @name                Twitter - Add notes to the user
+// @name:zh-CN          Twitter - 为用户添加备注(别名/标签)
+// @name:zh-TW          Twitter - 為用戶添加備註(別名/標籤)
+// @name:ja             Twitter - ユーザーへのメモの追加（エイリアス/ラベル）
+// @name:ko             Twitter - 사용자에게 메모 추가 (별칭/라벨)
+// @name:fr             Twitter - ajouter des notes aux utilisateurs (alias/tag)
+// @namespace           https://greasyfork.org/zh-CN/users/193133-pana
+// @homepage            https://www.sailboatweb.com
+// @icon                data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiBhcmlhLWxhYmVsbGVkYnk9Im5ld0ljb25UaXRsZSIgc3Ryb2tlPSJyZ2JhKDI5LDE2MSwyNDIsMS4wMCkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgZmlsbD0ibm9uZSIgY29sb3I9InJnYmEoMjksMTYxLDI0MiwxLjAwKSI+IDx0aXRsZSBpZD0ibmV3SWNvblRpdGxlIj5OZXc8L3RpdGxlPiA8cGF0aCBkPSJNMTkgMTRWMjJIMi45OTk5N1Y0SDEzIi8+IDxwYXRoIGQ9Ik0xNy40NjA4IDQuMDM5MjFDMTguMjQxOCAzLjI1ODE3IDE5LjUwODIgMy4yNTgxNiAyMC4yODkyIDQuMDM5MjFMMjAuOTYwOCA0LjcxMDc5QzIxLjc0MTggNS40OTE4NCAyMS43NDE4IDYuNzU4MTcgMjAuOTYwOCA3LjUzOTIxTDExLjU4NTggMTYuOTE0MkMxMS4yMTA3IDE3LjI4OTMgMTAuNzAyIDE3LjUgMTAuMTcxNiAxNy41TDcuNSAxNy41TDcuNSAxNC44Mjg0QzcuNSAxNC4yOTggNy43MTA3MSAxMy43ODkzIDguMDg1NzkgMTMuNDE0MkwxNy40NjA4IDQuMDM5MjFaIi8+IDxwYXRoIGQ9Ik0xNi4yNSA1LjI1TDE5Ljc1IDguNzUiLz4gPC9zdmc+
+// @version             4.0.22
+// @description         Add a note(alias/tag) for users to help identify and search
+// @description:zh-CN   为用户添加备注(别名/标签)功能，以帮助识别和搜索
+// @description:zh-TW   為用戶添加備註(別名/標籤)功能，以幫助識別和搜尋
+// @description:ja      ユーザーが識別と検索に役立つメモ(エイリアス/タグ)機能を追加する
+// @description:ko      사용자 식별 및 검색에 도움이되는 메모 (별칭/태그) 기능 추가
+// @description:fr      Ajouter une fonction de notes (alias/tag) pour les utilisateurs pour aider à identifier et rechercher
+// @author              pana
+// @license             GNU General Public License v3.0 or later
+// @compatible          chrome
+// @compatible          firefox
+// @include             http*://*twitter.com/*
+// @require             https://cdn.jsdelivr.net/npm/arrive@2.4.1/minified/arrive.min.js
+// @require             https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js
+// @require             https://greasyfork.org/scripts/408454-note-obj/code/Note_Obj.js?version=866506
+// @noframes
+// @grant               GM_info
+// @grant               GM.info
+// @grant               GM_getValue
+// @grant               GM.getValue
+// @grant               GM_setValue
+// @grant               GM.setValue
+// @grant               GM_deleteValue
+// @grant               GM.deleteValue
+// @grant               GM_listValues
+// @grant               GM.listValues
+// @grant               GM_openInTab
+// @grant               GM.openInTab
+// @grant               GM_registerMenuCommand
+// @grant               GM_unregisterMenuCommand
+// @grant               GM_addValueChangeListener
+// @grant               GM_removeValueChangeListener
+// ==/UserScript==
+ 
+(async function () {
+  'use strict';
+  if (typeof Note_Obj !== 'function') {
+    alert('Note_Obj.js was not loaded successfully!');
+  }
+  const UPDATED = '2021-03-21';
+  const TWITTER_ICON = {
+    NOTE_GRAY:
+      'url(data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiBhcmlhLWxhYmVsbGVkYnk9Im5ld0ljb25UaXRsZSIgc3Ryb2tlPSJyZ2IoMTAxLCAxMTksIDEzNCkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgZmlsbD0ibm9uZSIgY29sb3I9InJnYigxMDEsIDExOSwgMTM0KSI+IDx0aXRsZSBpZD0ibmV3SWNvblRpdGxlIj5OZXc8L3RpdGxlPiA8cGF0aCBkPSJNMTkgMTRWMjJIMi45OTk5N1Y0SDEzIi8+IDxwYXRoIGQ9Ik0xNy40NjA4IDQuMDM5MjFDMTguMjQxOCAzLjI1ODE3IDE5LjUwODIgMy4yNTgxNiAyMC4yODkyIDQuMDM5MjFMMjAuOTYwOCA0LjcxMDc5QzIxLjc0MTggNS40OTE4NCAyMS43NDE4IDYuNzU4MTcgMjAuOTYwOCA3LjUzOTIxTDExLjU4NTggMTYuOTE0MkMxMS4yMTA3IDE3LjI4OTMgMTAuNzAyIDE3LjUgMTAuMTcxNiAxNy41TDcuNSAxNy41TDcuNSAxNC44Mjg0QzcuNSAxNC4yOTggNy43MTA3MSAxMy43ODkzIDguMDg1NzkgMTMuNDE0MkwxNy40NjA4IDQuMDM5MjFaIi8+IDxwYXRoIGQ9Ik0xNi4yNSA1LjI1TDE5Ljc1IDguNzUiLz4gPC9zdmc+)',
+    NOTE_BLUE:
+      'url(data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiBhcmlhLWxhYmVsbGVkYnk9Im5ld0ljb25UaXRsZSIgc3Ryb2tlPSJyZ2JhKDI5LDE2MSwyNDIsMS4wMCkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgZmlsbD0ibm9uZSIgY29sb3I9InJnYmEoMjksMTYxLDI0MiwxLjAwKSI+IDx0aXRsZSBpZD0ibmV3SWNvblRpdGxlIj5OZXc8L3RpdGxlPiA8cGF0aCBkPSJNMTkgMTRWMjJIMi45OTk5N1Y0SDEzIi8+IDxwYXRoIGQ9Ik0xNy40NjA4IDQuMDM5MjFDMTguMjQxOCAzLjI1ODE3IDE5LjUwODIgMy4yNTgxNiAyMC4yODkyIDQuMDM5MjFMMjAuOTYwOCA0LjcxMDc5QzIxLjc0MTggNS40OTE4NCAyMS43NDE4IDYuNzU4MTcgMjAuOTYwOCA3LjUzOTIxTDExLjU4NTggMTYuOTE0MkMxMS4yMTA3IDE3LjI4OTMgMTAuNzAyIDE3LjUgMTAuMTcxNiAxNy41TDcuNSAxNy41TDcuNSAxNC44Mjg0QzcuNSAxNC4yOTggNy43MTA3MSAxMy43ODkzIDguMDg1NzkgMTMuNDE0MkwxNy40NjA4IDQuMDM5MjFaIi8+IDxwYXRoIGQ9Ik0xNi4yNSA1LjI1TDE5Ljc1IDguNzUiLz4gPC9zdmc+)',
+    SEARCH_BLUE:
+      'url(data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiBhcmlhLWxhYmVsbGVkYnk9InNlYXJjaEljb25UaXRsZSIgc3Ryb2tlPSJyZ2JhKDI5LDE2MSwyNDIsMS4wMCkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgZmlsbD0ibm9uZSIgY29sb3I9InJnYmEoMjksMTYxLDI0MiwxLjAwKSI+IDx0aXRsZSBpZD0ic2VhcmNoSWNvblRpdGxlIj5TZWFyY2g8L3RpdGxlPiA8cGF0aCBkPSJNMTQuNDEyMTEyMiwxNC40MTIxMTIyIEwyMCwyMCIvPiA8Y2lyY2xlIGN4PSIxMCIgY3k9IjEwIiByPSI2Ii8+IDwvc3ZnPg==)',
+  };
+  const TWITTER_STYLE = `
+        .note-obj-twitter-blue-tag {
+            background-color: #3c81df;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            line-height: 100%;
+            border-radius: 50px;
+        }
+        .note-obj-twitter-note-btn {
+            background-image: ${TWITTER_ICON.NOTE_GRAY};
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: rgba(0, 0, 0, 0);
+            border-bottom-left-radius: 9999px;
+            border-bottom-right-radius: 9999px;
+            border-top-left-radius: 9999px;
+            border-top-right-radius: 9999px;
+            transition-property: background-color, box-shadow;
+            transition-duration: 0.2s;
+        }
+        .note-obj-twitter-note-btn:hover {
+            background-image: ${TWITTER_ICON.NOTE_BLUE};
+            background-color: rgba(29, 161, 242, .1);
+        }
+        .note-obj-twitter-panel-btn {
+            height: 32px;
+            width: 32px;
+            margin: 5px 0px 0px 0px;
+            background-size: 28px auto;
+            cursor: pointer !important;
+            border-radius: 0px;
+        }
+        .note-obj-twitter-panel-btn:hover::after {
+            content: "";
+            display: flex;
+            position: relative;
+            background-color: rgba(29, 161, 242, .1);
+            width: 48px;
+            height: 48px;
+            top: -8px;
+            left: -8px;
+            border-radius: 99px;
+        }
+        .note-obj-twitter-base-tool-bar-btn-mobile {
+            height: 18px;
+            width: 18px;
+            margin: 0px 20px 0px 0px;
+            background-size: 18px auto;
+            border-radius: 0px;
+        }
+        .note-obj-twitter-comment-tool-bar-btn-mobile {
+            height: 24px;
+            width: 24px;
+            background-size: 24px auto;
+            border-radius: 0px;
+            margin: 10px 0px 0px 0px;
+        }
+        .note-obj-twitter-before-follow-note-btn {
+            height: 40px;
+            width: 40px;
+            background-image: ${TWITTER_ICON.NOTE_BLUE};
+            background-repeat: no-repeat;
+            background-size: 19px auto;
+            background-position: center;
+            margin-bottom: 12px;
+            margin-right: 12px;
+            cursor: pointer;
+            border: 1px solid rgba(29, 161, 242, 1);
+            border-bottom-left-radius: 9999px;
+            border-bottom-right-radius: 9999px;
+            border-top-left-radius: 9999px;
+            border-top-right-radius: 9999px;
+            background-color: rgba(0, 0, 0, 0);
+            transition-property: background-color, box-shadow;
+            transition-duration: 0.2s;
+        }
+        .note-obj-twitter-before-follow-note-btn:hover {
+            background-color: rgba(29, 161, 242, .1);
+        }
+        .note-obj-twitter-before-follow-note-btn-mobile {
+            margin-bottom: 8px !important;
+        }
+        .note-obj-twitter-search-btn-mobile {
+            background-image: ${TWITTER_ICON.SEARCH_BLUE};
+            background-size: 28px auto;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 28px;
+            height: 28px;
+            margin: 10px 20px 0px 0px;
+        }
+        .note-obj-twitter-base-tool-bar-btn {
+            height: 18px;
+            width: 18px;
+            margin: 0px -40px 0px 0px;
+            background-size: 20px auto;
+            border-radius: 0px;
+        }
+        .note-obj-twitter-base-tool-bar-btn:hover::after {
+            content: "";
+            position: absolute;
+            background-color: rgba(29, 161, 242, .1);
+            width: 34px;
+            height: 34px;
+            top: -8px;
+            left: -8px;
+            border-radius: 99px;
+        }
+        .note-obj-twitter-comment-tool-bar-btn {
+            height: 24px;
+            width: 24px;
+            margin: 12px 0px 0px 0px;
+            background-size: 24px auto;
+            border-radius: 0px;
+            cursor: pointer;
+        }
+        .note-obj-twitter-comment-tool-bar-btn:hover::after {
+            content: "";
+            position: absolute;
+            background-color: rgba(29, 161, 242, .1);
+            width: 38px;
+            height: 38px;
+            top: -8px;
+            left: -8px;
+            border-radius: 99px;
+        }
+        .note-obj-twitter-left-box {
+            height: 50%;
+        }
+    `;
+  let selector = {
+    body: 'body',
+    root: '#react-root div .r-13awgt0.r-12vffkv',
+    homepage: {
+      article: 'article',
+      toolBar: '.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-1mdbhws',
+      showName: '.css-901oao.css-bfa6kz.r-bcqeeo.r-3s2u2q.r-qvutc0 > span',
+      id: '.css-901oao.css-bfa6kz.r-18u37iz.r-1qd0xha.r-16dba41.r-bcqeeo.r-qvutc0 > span',
+      reprintA: '.css-1dbjc4n.r-1habvwh.r-16y2uox a',
+      reprintName: ':scope > span:first-of-type > span',
+      at: 'a.css-4rbku5.css-18t94o4.css-901oao.css-16my406.r-1loqt21.r-bcqeeo.r-qvutc0',
+      userFrame: '.css-18t94o4.css-1dbjc4n.r-1loqt21.r-1wbh5a2.r-dnmrzs.r-1ny4l3l',
+      blockquote: 'div[role="blockquote"]',
+    },
+    userpage: {
+      mainUserId: '.css-1dbjc4n.r-6gpygo.r-14gqq1x .css-1dbjc4n.r-18u37iz.r-1wbh5a2 > div > span',
+      main: '.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv',
+      id: '.css-1dbjc4n.r-18u37iz.r-1wbh5a2 > div > span',
+      follow: '.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs',
+      showName: '.css-901oao.r-1vr29t4.r-bcqeeo.r-qvutc0 > span',
+    },
+    comment: {
+      toolBar: '.css-1dbjc4n.r-1oszu61.r-1efd50x.r-5kkj8d.r-18u37iz.r-a2tzq0',
+    },
+    mobile: {
+      bootomBar: '',
+    },
+    hover: {
+      panel: 'div.css-1dbjc4n.r-nsbfu8',
+      followBtn: '.css-1dbjc4n.r-bcqeeo',
+      id: '.css-1dbjc4n.r-18u37iz.r-1wbh5a2',
+      showName: '.css-901oao.css-bfa6kz.r-a023e6.r-bcqeeo.r-3s2u2q.r-qvutc0 > span',
+    },
+  };
+  const mobileSelector = {
+    body: 'body',
+    root: '#react-root div .r-13awgt0.r-12vffkv',
+    homepage: {
+      article: 'article',
+      toolBar: '.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-1mdbhws',
+      showName: '.css-901oao.css-bfa6kz.r-bcqeeo.r-3s2u2q.r-qvutc0 > span',
+      id: '.css-901oao.css-bfa6kz.r-18u37iz.r-1qd0xha.r-16dba41.r-bcqeeo.r-qvutc0 > span',
+      reprintA: '.css-1dbjc4n.r-1habvwh.r-1iusvr4.r-16y2uox a',
+      reprintName: '.css-1dbjc4n.r-1habvwh.r-1iusvr4.r-16y2uox a > span > span',
+      at: 'a.css-4rbku5.css-18t94o4.css-901oao.css-16my406.r-1loqt21.r-bcqeeo.r-qvutc0',
+      userFrame: '.css-18t94o4.css-1dbjc4n.r-rull8r.r-qklmqi.r-1ny4l3l.r-779j7e.r-1xtiow5.r-o7ynqc.r-6416eg',
+      blockquote: 'div[role="blockquote"]',
+    },
+    userpage: {
+      mainUserId: '.css-1dbjc4n.r-6gpygo.r-14gqq1x .css-1dbjc4n.r-18u37iz.r-1wbh5a2 > div > span',
+      main: '.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv',
+      id: '.css-1dbjc4n.r-18u37iz.r-1wbh5a2 > div > span',
+      follow: '.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs',
+      showName: '.css-901oao.r-1vr29t4.r-bcqeeo.r-qvutc0 > span',
+    },
+    comment: {
+      toolBar: '.css-1dbjc4n.r-1oszu61.r-1efd50x.r-5kkj8d.r-18u37iz.r-a2tzq0',
+    },
+    mobile: {
+      bootomBar: '.css-1dbjc4n.r-18u37iz.r-drjvcx.r-ripixn.r-13qz1uu',
+    },
+    hover: {
+      panel: 'div.css-1dbjc4n.r-1oqcu8e',
+      followBtn: '.css-1dbjc4n.r-bcqeeo',
+      id: '.css-1dbjc4n.r-18u37iz.r-1wbh5a2',
+      showName: '.css-901oao.css-bfa6kz.r-a023e6.r-bcqeeo.r-3s2u2q.r-qvutc0 > span',
+    },
+  };
+  const noteObj = new Note_Obj('myTwitterNote');
+  await noteObj.init({
+    style: selector.homepage.showName + ' { white-space: normal; }\n' + TWITTER_STYLE,
+    changeEvent: changeEvent,
+    settings: {
+      showToolbarButton: {
+        type: 'checkbox',
+        lang: {
+          en:
+            'Display the "Add Note" button in the toolbar below each tweet (if there is no such button in the user\'s hover information panel, this option can be turned on)',
+          zh_cn: '在每条推特下方的工具栏里显示"添加备注"按钮 (如果在用户的悬停信息面板里没有此按钮时，可以打开此选项)',
+          zh_tw: '在每條推特下方的工具欄裡顯示"添加備註"按鈕 (如果在用戶的懸停資訊面板裡沒有此按鈕時，可以打開此選項)',
+          ja:
+            '各Twitterの下のツールバーに“備考追加”ボタンが表示されます(ユーザのホバリング情報パネルにこのボタンがない場合は、このオプションを開くことができます)',
+          ko:
+            '각 트위터 아래의 도구 모음에 "메모 추가" 단추가 표시됩니다(사용자의 롤오버 정보 패널에 이 단추가 없는 경우 이 옵션을 설정할 수 있음)',
+          fr:
+            "Afficher le bouton \"Ajouter une note\" dans la barre d'outils sous chaque tweet (S'il n'y a pas de bouton de ce type dans le panneau d'informations de survol de l'utilisateur, vous pouvez activer cette option)",
+        },
+        defalut: false,
+        event: insertToolbarButtonEvent,
+      },
+    },
+    script: {
+      author: {
+        name: 'pana',
+        homepage: 'https://www.sailboatweb.com/',
+      },
+      address: 'https://greasyfork.org/scripts/404587',
+      updated: UPDATED,
+      library: [
+        {
+          name: 'arrive.js',
+          version: '2.4.1',
+          url: 'https://github.com/uzairfarooq/arrive',
+        },
+      ],
+    },
+    leftBtnBoxClassName: 'note-obj-twitter-left-box',
+  });
+  function insertToolbarButtonEvent(status) {
+    if (!Note_Obj.fn.isMobilePage()) {
+      document.querySelectorAll(selector.homepage.article).forEach(ele => {
+        if (ele.querySelector(selector.homepage.id)) {
+          const eleId = ele.querySelector(selector.homepage.id).textContent.replace(/^@/, '');
+          const eleName = ele.querySelector(selector.homepage.showName).textContent;
+          const toolBar = ele.querySelector(selector.homepage.toolBar);
+          const commentToolBar = ele.querySelector(selector.comment.toolBar);
+          if (status) {
+            toolBar &&
+              !toolBar.querySelector('.note-obj-add-note-btn') &&
+              toolBar.appendChild(
+                noteObj.createNoteBtn(eleId, eleName, ['note-obj-twitter-note-btn', 'note-obj-twitter-base-tool-bar-btn', 'css-1dbjc4n'])
+              );
+            commentToolBar &&
+              !commentToolBar.querySelector('.note-obj-add-note-btn') &&
+              commentToolBar.appendChild(
+                noteObj.createNoteBtn(eleId, eleName, ['note-obj-twitter-note-btn', 'note-obj-twitter-comment-tool-bar-btn', 'css-1dbjc4n'])
+              );
+          } else {
+            toolBar && toolBar.querySelector('.note-obj-add-note-btn') && toolBar.querySelector('.note-obj-add-note-btn').remove();
+            commentToolBar &&
+              commentToolBar.querySelector('.note-obj-add-note-btn') &&
+              commentToolBar.querySelector('.note-obj-add-note-btn').remove();
+          }
+        }
+      });
+    }
+  }
+  function changeEvent(noteObj, userId = null) {
+    for (const ele of document.querySelectorAll(selector.homepage.article)) {
+      if (ele.querySelector(selector.homepage.id)) {
+        const eleId = ele.querySelector(selector.homepage.id).textContent.replace(/^@/, '');
+        (!userId || userId == eleId) &&
+          noteObj.handler(eleId, ele, selector.homepage.showName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+          });
+      }
+      const reprintA = ele.querySelector(selector.homepage.reprintA);
+      if (reprintA) {
+        const reprintId = Note_Obj.fn.getUserIdFromLink(reprintA.href);
+        (!userId || userId == reprintId) &&
+          noteObj.handler(reprintId, reprintA, selector.homepage.reprintName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+            symbol: {
+              offsetWidth: 30,
+            },
+          });
+      }
+      const blockquoteUser = ele.querySelector(selector.homepage.blockquote);
+      if (blockquoteUser) {
+        const blockquoteUserId = blockquoteUser.querySelector(selector.homepage.id).textContent.replace(/^@/, '');
+        if (blockquoteUserId == userId) {
+          noteObj.handler(userId, blockquoteUser, selector.homepage.showName);
+        }
+        (!userId || userId == blockquoteUserId) &&
+          noteObj.handler(blockquoteUserId, blockquoteUser, selector.homepage.showName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+          });
+      }
+      for (const atUser of ele.querySelectorAll(selector.homepage.at)) {
+        const atUserId = Note_Obj.fn.getUserIdFromLink(atUser.href, value => /^[^/]+$/i.test(value));
+        (!userId || userId == atUserId) &&
+          noteObj.judgeUsers(atUserId) &&
+          noteObj.handler(atUserId, atUser, null, {
+            symbol: {
+              prefix: '@',
+            },
+          });
+      }
+    }
+    for (const ele of document.querySelectorAll(selector.userpage.main)) {
+      const user = ele.querySelector(selector.userpage.id);
+      if (user) {
+        const eleId = user.textContent.replace(/^@/, '');
+        (!userId || userId == eleId) &&
+          noteObj.handler(eleId, ele, selector.userpage.showName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+          });
+      }
+    }
+    for (const ele of document.querySelectorAll(selector.homepage.userFrame)) {
+      const user = ele.querySelector(selector.userpage.id);
+      if (user) {
+        const eleId = user.textContent.replace(/^@/, '');
+        (!userId || userId == eleId) &&
+          noteObj.handler(eleId, ele, selector.homepage.showName, {
+            add: 'span',
+            class: 'note-obj-twitter-blue-tag',
+          });
+      }
+    }
+  }
+  function init() {
+    const arriveOption = {
+      fireOnAttributesModification: true,
+      existing: true,
+    };
+    if (Note_Obj.fn.isMobilePage()) {
+      selector = mobileSelector;
+      document.querySelector(selector.root).arrive(selector.mobile.bootomBar, arriveOption, function () {
+        this.appendChild(noteObj.createSearchButton('note-obj-twitter-search-btn-mobile'));
+      });
+    }
+    document.querySelector(selector.root).arrive(selector.homepage.article, arriveOption, ele => {
+      if (ele.querySelector(selector.homepage.id)) {
+        const eleId = ele.querySelector(selector.homepage.id).textContent.replace(/^@/, '');
+        const eleName = ele.querySelector(selector.homepage.showName).textContent;
+        if (Note_Obj.fn.isMobilePage()) {
+          ele.querySelector(selector.homepage.toolBar) &&
+            ele
+              .querySelector(selector.homepage.toolBar)
+              .appendChild(
+                noteObj.createNoteBtn(eleId, eleName, [
+                  'note-obj-twitter-note-btn',
+                  'note-obj-twitter-base-tool-bar-btn-mobile',
+                  'css-1dbjc4n',
+                ])
+              );
+        } else {
+          noteObj.getConfig().other.showToolbarButton &&
+            ele.querySelector(selector.homepage.toolBar) &&
+            ele
+              .querySelector(selector.homepage.toolBar)
+              .appendChild(
+                noteObj.createNoteBtn(eleId, eleName, ['note-obj-twitter-note-btn', 'note-obj-twitter-base-tool-bar-btn', 'css-1dbjc4n'])
+              );
+        }
+        if (Note_Obj.fn.isMobilePage()) {
+          ele.querySelector(selector.comment.toolBar) &&
+            ele
+              .querySelector(selector.comment.toolBar)
+              .appendChild(
+                noteObj.createNoteBtn(eleId, eleName, [
+                  'note-obj-twitter-note-btn',
+                  'note-obj-twitter-comment-tool-bar-btn-mobile',
+                  'css-1dbjc4n',
+                ])
+              );
+        } else {
+          noteObj.getConfig().other.showToolbarButton &&
+            ele.querySelector(selector.comment.toolBar) &&
+            ele
+              .querySelector(selector.comment.toolBar)
+              .appendChild(
+                noteObj.createNoteBtn(eleId, eleName, ['note-obj-twitter-note-btn', 'note-obj-twitter-comment-tool-bar-btn', 'css-1dbjc4n'])
+              );
+        }
+        noteObj.judgeUsers(eleId) &&
+          noteObj.handler(
+            eleId,
+            ele,
+            selector.homepage.showName,
+            {
+              add: 'span',
+              classname: 'note-obj-twitter-blue-tag',
+            },
+            eleName
+          );
+      }
+      const reprintA = ele.querySelector(selector.homepage.reprintA);
+      if (reprintA) {
+        const reprintId = Note_Obj.fn.getUserIdFromLink(reprintA.href);
+        noteObj.judgeUsers(reprintId) &&
+          noteObj.handler(reprintId, reprintA, selector.homepage.reprintName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+            symbol: {
+              offsetWidth: 30,
+            },
+          });
+      }
+      const blockquoteUser = ele.querySelector(selector.homepage.blockquote);
+      if (blockquoteUser) {
+        const blockquoteUserId = blockquoteUser.querySelector(selector.homepage.id).textContent.replace(/^@/, '');
+        noteObj.judgeUsers(blockquoteUserId) &&
+          noteObj.handler(blockquoteUserId, blockquoteUser, selector.homepage.showName, {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+          });
+      }
+      for (const atUser of ele.querySelectorAll(selector.homepage.at)) {
+        const atUserId = Note_Obj.fn.getUserIdFromLink(atUser.href, value => /^[^/]+$/i.test(value));
+        noteObj.judgeUsers(atUserId) &&
+          noteObj.handler(atUserId, atUser, null, {
+            symbol: {
+              prefix: '@',
+            },
+          });
+      }
+    });
+    document.querySelector(selector.root).arrive(selector.userpage.main, arriveOption, ele => {
+      const eleId = ele.querySelector(selector.userpage.id).textContent.replace(/^@/, '');
+      const eleName = ele.querySelector(selector.userpage.showName).textContent;
+      let followNoteBtn;
+      if (ele.querySelector(selector.userpage.follow)) {
+        if (Note_Obj.fn.isMobilePage()) {
+          followNoteBtn = noteObj.createNoteBtn(eleId, eleName, [
+            'note-obj-twitter-before-follow-note-btn',
+            'css-901oao',
+          ]);
+        } else {
+          followNoteBtn = noteObj.createNoteBtn(eleId, eleName, ['note-obj-twitter-before-follow-note-btn', 'css-901oao']);
+        }
+        ele.querySelector(selector.userpage.follow).insertAdjacentElement('afterbegin', followNoteBtn);
+      }
+      noteObj.judgeUsers(eleId) &&
+        noteObj.handler(
+          eleId,
+          ele,
+          selector.userpage.showName,
+          {
+            add: 'span',
+            classname: 'note-obj-twitter-blue-tag',
+          },
+          eleName
+        );
+      const userIdChange = new MutationObserver(() => {
+        const newUserId = ele.querySelector(selector.userpage.id).textContent.replace(/^@/, '');
+        noteObj.handler('', ele, selector.userpage.showName, {
+          add: 'span',
+          classname: 'note-obj-twitter-blue-tag',
+        });
+        const newUserName = ele.querySelector(selector.userpage.showName).textContent;
+        if (followNoteBtn) {
+          followNoteBtn.remove();
+          if (Note_Obj.fn.isMobilePage()) {
+            followNoteBtn = noteObj.createNoteBtn(newUserId, newUserName, [
+              'note-obj-twitter-before-follow-note-btn',
+              'note-obj-twitter-before-follow-note-btn-mobile',
+              'css-901oao',
+            ]);
+          } else {
+            followNoteBtn = noteObj.createNoteBtn(newUserId, newUserName, ['note-obj-twitter-before-follow-note-btn', 'css-901oao']);
+          }
+          ele.querySelector(selector.userpage.follow).insertAdjacentElement('afterbegin', followNoteBtn);
+        }
+        noteObj.judgeUsers(newUserId) &&
+          noteObj.handler(
+            newUserId,
+            ele,
+            selector.userpage.showName,
+            {
+              add: 'span',
+              classname: 'note-obj-twitter-blue-tag',
+            },
+            newUserName
+          );
+      });
+      userIdChange.observe(ele.querySelector(selector.userpage.mainUserId), {
+        subtree: true,
+        characterData: true,
+      });
+    });
+    document.querySelector(selector.root).arrive(selector.homepage.userFrame, arriveOption, ele => {
+      const eleId = ele.querySelector(selector.userpage.id) ? ele.querySelector(selector.userpage.id).textContent.replace(/^@/, '') : null;
+      noteObj.judgeUsers(eleId) &&
+        noteObj.handler(eleId, ele, selector.homepage.showName, {
+          add: 'span',
+          class: 'note-obj-twitter-blue-tag',
+        });
+    });
+    document.querySelector(selector.root).arrive(selector.hover.panel, arriveOption, ele => {
+      const user = ele.querySelector(selector.hover.id);
+      if (user) {
+        const eleId = user.textContent.replace(/^@/, '');
+        const userShowName = ele.querySelector(selector.hover.showName);
+        if (userShowName) {
+          const userShowNameText = userShowName.textContent;
+          ele.querySelector(selector.hover.followBtn) &&
+            ele
+              .querySelector(selector.hover.followBtn)
+              .insertAdjacentElement(
+                'beforebegin',
+                noteObj.createNoteBtn(eleId, userShowNameText, ['note-obj-twitter-note-btn', 'note-obj-twitter-panel-btn'])
+              );
+          noteObj.judgeUsers(eleId) &&
+            noteObj.handler(
+              eleId,
+              ele,
+              selector.hover.showName,
+              {
+                add: 'span',
+                class: 'note-obj-twitter-blue-tag',
+              },
+              userShowNameText
+            );
+        }
+      }
+    });
+  }
+  init();
+})();
