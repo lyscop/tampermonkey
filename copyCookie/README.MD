@@ -7,4 +7,4 @@ copyCookie
 
 后期想办法改进。
 
-基于@mudssky发布的get-cookies修改而来。
+基于@mudssky发布的[get-cookies](https://greasyfork.org/zh-CN/scripts/428367-get-cookies)修改而来。
