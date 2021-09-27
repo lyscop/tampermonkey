@@ -6,6 +6,15 @@ https://greasyfork.org/zh-CN/scripts/432337
 此脚本根据@Johnny Li [网页搜索助手](https://greasyfork.org/zh-CN/scripts/389784) 以及@naturezhm [Netflix影片显示豆瓣评分](https://greasyfork.org/zh-CN/scripts/432337) 修改。<br>
 脚本发布到 Github 了，有功能建议或者BUG欢迎 issues。
 
+功能说明<br>
+点击豆瓣电影图片可以跳转到豆瓣电影<br>
+点击搜索到的 视频标题 ，可以跳转到对应的豆瓣页面<br>
+点击 展示搜索结果 可以看到更多的搜索结果<br>
+通过设置可以修改 搜索图标的展示位置<br>
+
+
+设置项
+
 搜索引擎<br>
 默认搜索引擎可以通过设置修改
 
